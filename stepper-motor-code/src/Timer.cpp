@@ -5,7 +5,7 @@ Timer::Timer(long delay, ITimer *callback)
     :delay(delay)
     ,callback(callback)
 {
-    this->lastMicros = micros();
+    micros = 0;
 }
 
 int Timer::setDelay(long delay)
@@ -16,12 +16,12 @@ int Timer::setDelay(long delay)
 
 int Timer::update()
 {
+    micros += TIMER_STEP;
     if (delay != 0)
     {
-        long time = micros();
-        if (time - lastMicros > delay)
+        if (micros - lastMicros > delay)
         {
-            lastMicros = time;
+            lastMicros = micros;
             callback->event();
         }
     }

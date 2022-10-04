@@ -19,7 +19,7 @@ void setup() {
 
   timer = timerBegin(0, 80, true);
   timerAttachInterrupt(timer, &onTimer, true);
-  timerAlarmWrite(timer, 10, true);
+  timerAlarmWrite(timer, TIMER_STEP, true);
   timerAlarmEnable(timer);
   
 }
