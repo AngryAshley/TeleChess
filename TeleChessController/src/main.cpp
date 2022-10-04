@@ -3,88 +3,109 @@
 #include <SparkFun_Qwiic_OLED.h>
 #include <res/qw_fnt_5x7.h>
 #include <Wire.h>
-#include <ESP32Encoder.h>
 #include <string.h>
 
-QwiicMicroOLED myOLED;
+QwiicMicroOLED myOLED; // Screen
 
-#define encA 19
-#define encB 18
-volatile int encCount = 0;
-int encCountLast = 0;
-// int aVal;
-ESP32Encoder encoder;
+// Encoder config
+#define ENC_PIN_A 19          // CLK pin
+#define ENC_PIN_B 18          // DT pin
+volatile byte aFlag = 0;      // A First pin with signal
+volatile byte bFlag = 0;      // B First pin with signal
+volatile int encCount = 0;    // Position of encoder
+volatile int oldEncCount = 0; // Last position of encoder
+// volatile byte reading = 0;    // Value being read from encoder
 
-#define sda 21
-#define scl 22
-TwoWire I2C = TwoWire(0);
+// I2C Wire config
+#define sda 21            // I2C data pin
+#define scl 22            // I2C clock pin
+TwoWire I2C = TwoWire(0); // I2C wire object
 
-IRAM_ATTR void enc_cb(){
-
-  if(digitalRead(encB) == HIGH)
-  {
-    encCount++;
-  }else
+IRAM_ATTR void PinA()
+{
+  //cli();
+  if (digitalRead(ENC_PIN_B) && digitalRead(ENC_PIN_A) && aFlag)
   {
     encCount--;
+    bFlag = 0;
+    aFlag = 0;
   }
-  
-  Serial.printf("enc cb: count: %i\n", encCount);
+  else if (digitalRead(ENC_PIN_A))
+  {
+    bFlag = 1;
+  }
+  //sei();
 }
 
-void printValToScreen(int val){
-  
-  char count[20]; 
-  String nr = String(itoa(val, count,10));
+IRAM_ATTR void PinB()
+{
+  //cli();
+  if (digitalRead(ENC_PIN_B) && digitalRead(ENC_PIN_A) && bFlag)
+  {
+    encCount++;
+    bFlag = 0;
+    aFlag = 0;
+  }
+  else if (digitalRead(ENC_PIN_B))
+  {
+    aFlag = 1;
+  }
+  //sei();
+}
 
-  //myOLED.erase();
+void printValToScreen(int val)
+{
 
-  myOLED.rectangleFill(myOLED.getHeight()/2 -8,  16, myOLED.getHeight()-16, 16);
-  
-  int x0 = (myOLED.getWidth() - QW_FONT_5X7.width * nr.length())/2;
+  char count[20];
+  String nr = String(itoa(val, count, 10));
 
-  int y0 = (myOLED.getHeight() - QW_FONT_5X7.height)/2;
+  myOLED.rectangleFill(myOLED.getHeight() / 2 - 8, 16, myOLED.getHeight() - 16, 16);
+
+  int x0 = (myOLED.getWidth() - QW_FONT_5X7.width * nr.length()) / 2;
+
+  int y0 = (myOLED.getHeight() - QW_FONT_5X7.height) / 2;
 
   myOLED.text(x0, y0, nr, 0);
 
   myOLED.display();
 }
 
+void setup()
+{
 
-void setup() {
-  
   Serial.begin(115200);
 
-  pinMode(encA,INPUT);
-  pinMode(encB,INPUT);
-  // encALast = digitalRead(encA);
-  attachInterrupt(encA,enc_cb,RISING);
+  pinMode(ENC_PIN_A, INPUT);
+  pinMode(ENC_PIN_B, INPUT);
 
-  // ESP32Encoder::useInternalWeakPullResistors=UP;
-  // encoder.attachHalfQuad(encA,encB);
-  // encoder.clearCount();
+  attachInterrupt(ENC_PIN_A, PinA, RISING);
+  attachInterrupt(ENC_PIN_B, PinB, RISING);
 
-  I2C.begin(sda,scl);
+  I2C.begin(sda, scl);
 
   delay(500);
 
-  if(!myOLED.begin(I2C,0X3D)){
+  if (!myOLED.begin(I2C, 0X3D))
+  {
 
-        Serial.println(" - Device Begin Failed");
-        while(1);
-    }
+    Serial.println(" - Device Begin Failed");
+    while (1)
+      ;
+  }
 
-    Serial.println("- Begin Success");
+  Serial.println("- Begin Success");
 
-    //myOLED.rectangleFill(4, 4, myOLED.getWidth()-8, myOLED.getHeight()-8);
+  // myOLED.rectangleFill(4, 4, myOLED.getWidth()-8, myOLED.getHeight()-8);
 
-    printValToScreen(0);
+  printValToScreen(0);
 }
 
-void loop() {
+void loop()
+{
 
-  if(encCount != encCountLast){
+  if (encCount != oldEncCount)
+  {
     printValToScreen(encCount);
-    encCountLast = encCount;
+    oldEncCount = encCount;
   }
 }
