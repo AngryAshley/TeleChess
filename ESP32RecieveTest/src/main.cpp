@@ -21,21 +21,33 @@ void setup()
   status = WiFi.begin(ssid, pass);
 }
 
+void callback(char *topic, byte *message, unsigned int length)
+{
+    Serial.print("Message arrived on topic: ");
+    Serial.print(topic);
+    Serial.print(". Message: ");
+    String messageTemp;
+
+    for (int i = 0; i < length; i++)
+    {
+        Serial.print((char)message[i]);
+        messageTemp += (char)message[i];
+    }
+    Serial.println();
+}
 void loop()
 {
   if (status = WL_CONNECTED)
   {
-    Serial.println("Connected to wifi");
-    Serial.println("\nStarting connection...");
     client.connect(ssid, mqttUser, mqttPassword);
     // if you get a connection, report back via serial:
-    if (client.loop())
+    if (client.connected())
     {
-      Serial.println("connected");
-      // Once connected, publish an announcement...
-      client.publish(mqttTopic, "hello world");
+      // Once connected, publish an announcement
       // ... and resubscribe
-      client.subscribe(mqttTopic);
+      client.subscribe(mqttTopic);  
+      client.setCallback(callback);
+  
     }
     else
     {
@@ -44,6 +56,7 @@ void loop()
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
     }
-    delay(5000);
+    client.loop();
+  
   }
 }
