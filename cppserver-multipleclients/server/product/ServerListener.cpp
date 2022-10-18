@@ -118,10 +118,10 @@ void ServerListener::Listen()
                 {
                     std::cout << "client: " << clients[i] << " dropped\n";
                     removeClient(clients[i]);
-
+                    std::cout << "Remaining:\n";
                     for (int j = 0; j < nrClients; j++)
                     {
-                        std::cout << "client: " << clients[i] << std::endl;
+                        std::cout << "\tclient: " << clients[j] << std::endl;
                     }
                 }
             }
