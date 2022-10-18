@@ -95,7 +95,6 @@ void ServerListener::Listen()
         }
         for (int i = 0; i < nrClients; i++)
         {
-            std::cout << "checking client: " << clients[i] << std::endl;
             if (FD_ISSET(clients[i], &sockets))
             {
                 char buf[100];
@@ -103,7 +102,8 @@ void ServerListener::Listen()
                 if (nrBytes >= 0)
                 {
                     buf[nrBytes] = '\0';
-                    std::cout << "received " << nrBytes << " bytes: " << buf << std::endl;
+                    std::cout << "From: " << clients[i] << " received " << nrBytes << " bytes: " << buf << std::endl;
+                    send(clients[i], buf, nrBytes, 0);
                 }
                 else if (nrBytes == 0)
                 {
@@ -145,5 +145,9 @@ void ServerListener::removeClient(int client)
         {
             clients[i] = 0;
         }
+    }
+    if (found)
+    {
+        nrClients--;
     }
 }
