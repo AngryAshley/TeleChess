@@ -26,6 +26,15 @@ void ServerListener::Start()
         exit(EXIT_FAILURE);
     }
 
+    int opt = true;
+
+    if( setsockopt(connectionSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, 
+          sizeof(opt)) < 0 )  
+    {  
+        perror("setsockopt");  
+        exit(EXIT_FAILURE);  
+    }  
+
     memset(&address, 0, sizeof(address));
     address.sin_family = AF_INET;
     address.sin_port = htons(portNumber);
@@ -99,7 +108,7 @@ void ServerListener::Listen()
             {
                 char buf[100];
                 int nrBytes = read(clients[i], buf, 99);
-                if (nrBytes >= 0)
+                if (nrBytes > 0)
                 {
                     buf[nrBytes] = '\0';
                     std::cout << "From: " << clients[i] << " received " << nrBytes << " bytes: " << buf << std::endl;
@@ -107,8 +116,13 @@ void ServerListener::Listen()
                 }
                 else if (nrBytes == 0)
                 {
-                    std::cout << "client: " << clients[i] << " dropped";
+                    std::cout << "client: " << clients[i] << " dropped\n";
                     removeClient(clients[i]);
+
+                    for (int j = 0; j < nrClients; j++)
+                    {
+                        std::cout << "client: " << clients[i] << std::endl;
+                    }
                 }
             }
         }
@@ -117,7 +131,7 @@ void ServerListener::Listen()
 
 int ServerListener::addClient(int client)
 {
-    if (nrClients == MAX_CLIENTS)
+    if (nrClients >= MAX_CLIENTS)
     {
         return -1;
     }
@@ -135,19 +149,16 @@ void ServerListener::removeClient(int client)
             if (clients[i] == client)
             {
                 found = true;
+                clients[i] = clients[i + 1];
             }
         }
-        else if (i < nrClients)
+        else if (i + 1 < MAX_CLIENTS)
         {
             clients[i] = clients[i + 1];
-        }
-        else
-        {
-            clients[i] = 0;
         }
     }
     if (found)
     {
-        nrClients--;
+        clients[nrClients--] = 0;
     }
 }
