@@ -103,6 +103,7 @@ void ServerListener::Listen()
                 {
                     buf[nrBytes] = '\0';
                     std::cout << "From: " << clients[i] << " received " << nrBytes << " bytes: " << buf << std::endl;
+                    send(clients[i], buf, nrBytes, 0);
                 }
                 else if (nrBytes == 0)
                 {
