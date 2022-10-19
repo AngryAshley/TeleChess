@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "functional": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "ostream": "cpp"
     }
 }

@@ -13,6 +13,7 @@
 //Menu Config
 #define ITEMS_PER_SCREEN 7
 #define MAX_ITEM_SIZE 10
+#define ITEMS_IN_MENU 3
 
 
 #endif
