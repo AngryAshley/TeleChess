@@ -7,14 +7,17 @@
 #include <sys/select.h>
 #include <unistd.h>
 
-ServerListener::ServerListener(uint16_t portNumber)
+ServerListener::ServerListener(uint16_t portNumber, bool verbose)
 :portNumber(portNumber)
+,verbose(verbose)
 {
     nrClients = 0;
     for (int i = 0; i < MAX_CLIENTS; i++)
     {
         clients[i] = 0;
     }
+    isListening = true;
+    Start();
 }
 
 void ServerListener::Start()
@@ -54,79 +57,121 @@ void ServerListener::Start()
         exit(EXIT_FAILURE);
     }
 
-
+    listeningThread = std::thread(Listen, this);
     
 }
 
-void ServerListener::Listen()
+void ServerListener::Listen(ServerListener* sl)
 {
-    fd_set sockets;
-
-    FD_ZERO(&sockets);
-    FD_SET(connectionSocket, &sockets);
-
-    for (int i = 0; i < nrClients; i++)
+    while (sl->isListening)
     {
-        FD_SET(clients[i], &sockets);
-    }
+        fd_set sockets;
 
-    struct timeval timeout;
-    timeout.tv_sec = 2;
-    timeout.tv_usec = 0;
+        FD_ZERO(&sockets);
+        FD_SET(sl->connectionSocket, &sockets);
 
-    int nrSockets = select(FD_SETSIZE, &sockets, NULL, NULL, &timeout);
-
-    if (nrSockets < 0)
-    {
-        perror("error from calling socket");
-    }
-    else if (nrSockets == 0)
-    {
-        std::cout << "listening..." << std::endl;
-    }
-    else
-    {
-        if (FD_ISSET(connectionSocket, &sockets))
+        for (int i = 0; i < sl->nrClients; i++)
         {
-            int newSocket = accept(connectionSocket, NULL, NULL);
-            if (newSocket < 0)
+            FD_SET(sl->clients[i], &sockets);
+        }
+
+        struct timeval timeout;
+        timeout.tv_sec = 2;
+        timeout.tv_usec = 0;
+
+        int nrSockets = select(FD_SETSIZE, &sockets, NULL, NULL, &timeout);
+
+        if (nrSockets < 0)
+        {
+            perror("error from calling socket");
+        }
+        else if (nrSockets == 0)
+        {
+            if (sl->verbose)
             {
-                perror("accept failed");
-            }
-            if (addClient(newSocket) < 0)
-            {
-                std::cout << "max number of clients reached" << std::endl;
-            }
-            else
-            {
-                std::cout << "new client: " << newSocket << " added" << std::endl;
+                std::cout << "listening..." << std::endl;
             }
         }
-        for (int i = 0; i < nrClients; i++)
+        else
         {
-            if (FD_ISSET(clients[i], &sockets))
+            if (FD_ISSET(sl->connectionSocket, &sockets))
             {
-                char buf[100];
-                int nrBytes = read(clients[i], buf, 99);
-                if (nrBytes > 0)
+                int newSocket = accept(sl->connectionSocket, NULL, NULL);
+                if (newSocket < 0)
                 {
-                    buf[nrBytes] = '\0';
-                    std::cout << "From: " << clients[i] << " received " << nrBytes << " bytes: " << buf << std::endl;
-                    send(clients[i], buf, nrBytes, 0);
+                    perror("accept failed");
                 }
-                else if (nrBytes == 0)
+                if (sl->addClient(newSocket) < 0)
                 {
-                    std::cout << "client: " << clients[i] << " dropped\n";
-                    removeClient(clients[i]);
-                    std::cout << "Remaining:\n";
-                    for (int j = 0; j < nrClients; j++)
+                    if (sl->verbose)
                     {
-                        std::cout << "\tclient: " << clients[j] << std::endl;
+                        std::cout << "max number of clients reached" << std::endl;
+                    }
+                }
+                else
+                {
+                    if (sl->verbose)
+                    {
+                        std::cout << "new client: " << newSocket << " added" << std::endl;
+                    }
+                }
+            }
+            for (int i = 0; i < sl->nrClients; i++)
+            {
+                if (FD_ISSET(sl->clients[i], &sockets))
+                {
+                    char buf[100];
+                    int nrBytes = read(sl->clients[i], buf, 99);
+                    if (nrBytes > 0)
+                    {
+                        buf[nrBytes] = '\0';
+                        if (sl->verbose)
+                        {
+                            std::cout << "From: " << sl->clients[i] << " received " << nrBytes << " bytes: " << buf << std::endl;
+                            send(sl->clients[i], buf, nrBytes, 0);
+                        }
+                        std::string cmd = std::to_string(sl->clients[i]) + " " + std::string(buf);
+                        sl->messageQueue.insert(sl->messageQueue.begin(), cmd);
+                    }
+                    else if (nrBytes == 0)
+                    {
+                        sl->removeClient(sl->clients[i]);
+                        if (sl->verbose)
+                        {
+                            std::cout << "client: " << sl->clients[i] << " dropped\n";
+                            std::cout << "Remaining:\n";
+                            for (int j = 0; j < sl->nrClients; j++)
+                            {
+                                std::cout << "\tclient: " << sl->clients[j] << std::endl;
+                            }
+                        }
                     }
                 }
             }
         }
     }
+}
+
+void ServerListener::Stop()
+{
+    isListening = false;
+    listeningThread.join();
+}
+
+bool ServerListener::Available()
+{
+    return !(messageQueue.empty());
+}
+
+std::string ServerListener::GetCommand()
+{
+    if (Available())
+    {
+        std::string cmd = messageQueue.back();
+        messageQueue.pop_back();
+        return cmd;
+    }
+    return NULL;
 }
 
 int ServerListener::addClient(int client)
@@ -161,4 +206,9 @@ void ServerListener::removeClient(int client)
     {
         clients[nrClients--] = 0;
     }
+}
+
+ServerListener::~ServerListener()
+{
+    Stop();
 }

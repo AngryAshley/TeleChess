@@ -8,7 +8,7 @@ HEADER_PROD_FILES := $(wildcard $(patsubst %,%/*.h, $(PROD_DIRS)))
 PROD_INC_DIRS=-I$(PROD_DIR)
 
 CC=g++
-SYMBOLS=-Wall -Werror -g -pedantic -O0 
+SYMBOLS=-Wall -Werror -g -pedantic -O0 -pthread
 
 .PHONY: clean
 
@@ -19,6 +19,9 @@ $(PROD_EXEC): Makefile $(PROD_FILES)  $(HEADER_FILES)
 
 run: $(PROD_EXEC)
 	@./$(BUILD_DIR)/$(PROD_EXEC)
+
+verbose: $(PROD_EXEC)
+	@./$(BUILD_DIR)/$(PROD_EXEC) v
 
 clean:
 	rm -rf $(BUILD_DIR)/$(PROD_EXEC)*
