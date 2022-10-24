@@ -33,6 +33,7 @@ public:
     ServerListener(uint16_t portNumber, bool verbose);
     bool Available();
     std::string GetCommand();
+    int Send(int clientID, std::string &message);
     ~ServerListener();
 };
 
