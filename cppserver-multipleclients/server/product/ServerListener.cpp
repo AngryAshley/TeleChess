@@ -7,15 +7,16 @@
 #include <sys/select.h>
 #include <unistd.h>
 
-ServerListener::ServerListener(uint16_t portNumber, bool verbose)
+ServerListener::ServerListener(uint16_t portNumber, bool verbose, MatchMaker* matchmaker)
 :portNumber(portNumber)
 ,verbose(verbose)
+,matchmaker(matchmaker)
 {
     nrClients = 0;
-    for (int i = 0; i < MAX_CLIENTS; i++)
-    {
-        clients[i] = 0;
-    }
+    // for (int i = 0; i < MAX_CLIENTS; i++)
+    // {
+    //     clients[i] = 0;
+    // }
     isListening = true;
     Start();
 }
@@ -72,7 +73,7 @@ void ServerListener::Listen(ServerListener* sl)
 
         for (int i = 0; i < sl->nrClients; i++)
         {
-            FD_SET(sl->clients[i], &sockets);
+            FD_SET(sl->clients[i]->GetID(), &sockets);
         }
 
         struct timeval timeout;
@@ -118,24 +119,29 @@ void ServerListener::Listen(ServerListener* sl)
             }
             for (int i = 0; i < sl->nrClients; i++)
             {
-                if (FD_ISSET(sl->clients[i], &sockets))
+                if (FD_ISSET(sl->clients[i]->GetID(), &sockets))
                 {
                     char buf[100];
-                    int nrBytes = read(sl->clients[i], buf, 99);
+                    int nrBytes = read(sl->clients[i]->GetID(), buf, 99);
                     if (nrBytes > 0)
                     {
                         buf[nrBytes] = '\0';
                         if (sl->verbose)
                         {
-                            std::cout << "From: " << sl->clients[i] << " received " << nrBytes << " bytes: " << buf << std::endl;
-                            send(sl->clients[i], buf, nrBytes, 0);
+                            std::cout << "From: " << sl->clients[i]->GetID() << " received " << nrBytes << " bytes: " << buf << std::endl;
+                            send(sl->clients[i]->GetID(), buf, nrBytes, 0);
                         }
-                        std::string cmd = std::to_string(sl->clients[i]) + " " + std::string(buf);
+
+                        std::string cmd = std::to_string(sl->clients[i]->GetID()) + " " + std::string(buf);
+                        if (sl->clients[i]->GetInMatch())
+                        {
+                            sl->clients[i]->Move(cmd);
+                        }
                         sl->messageQueue.insert(sl->messageQueue.begin(), cmd);
                     }
                     else if (nrBytes == 0)
                     {
-                        sl->removeClient(sl->clients[i]);
+                        sl->removeClient(sl->clients[i]->GetID());
                         if (sl->verbose)
                         {
                             std::cout << "client: " << sl->clients[i] << " dropped\n";
@@ -174,24 +180,25 @@ std::string ServerListener::GetCommand()
     return NULL;
 }
 
-int ServerListener::addClient(int client)
+int ServerListener::addClient(int ID)
 {
     if (nrClients >= MAX_CLIENTS)
     {
         return -1;
     }
-    clients[nrClients++] = client;
+    clients[nrClients++] = new WebPlayer(this, ID);
+    matchmaker->AddPlayer(clients[nrClients - 1]);
     return 0;
 }
 
-void ServerListener::removeClient(int client)
+void ServerListener::removeClient(int ID)
 {
     bool found = false;
     for (int i = 0; i < nrClients; i++)
     {
         if (!found)
         {
-            if (clients[i] == client)
+            if (clients[i]->GetID() == ID)
             {
                 found = true;
                 clients[i] = clients[i + 1];
@@ -204,11 +211,35 @@ void ServerListener::removeClient(int client)
     }
     if (found)
     {
-        clients[nrClients--] = 0;
+        delete(clients[nrClients--]);
+        clients[nrClients--] = nullptr;
     }
+}
+
+WebPlayer* ServerListener::getClient(int ID)
+{
+    for (int i = 0; i < nrClients; i++)
+    {
+        if (clients[i]->GetID() == ID)
+        {
+            return clients[i];
+        }
+    }
+    return nullptr;
+}
+
+bool ServerListener::Send(int clientID, std::string &message)
+{
+    send(clientID, message.c_str(), message.size(), 0);
+    return true;
 }
 
 ServerListener::~ServerListener()
 {
     Stop();
+
+    for (int i = 0; i < nrClients; i++)
+    {
+        delete(clients[i]);
+    }
 }

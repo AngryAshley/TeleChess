@@ -7,19 +7,18 @@
 
 #include <string>
 
-class Match : IMatch
+class Match : public IMatch
 {
-private:
-    const int nrPlayers;
-    
-    IReferee referee;
-    IPlayer* players;
-    int playerToMove = 0;
+private:    
+    IReferee* referee;
+    IPlayer* playerWhite;
+    IPlayer* playerBlack;
+    IPlayer* playerToMove;
 
-    Piece* currentBoard;
 public:
-    bool TryMove(Piece* boardBefore, Piece* boardAfter, IPlayer *player);
-    Match(IReferee referee, IPlayer* players, int nrPlayers);
+    bool TryMove(std::string move, IPlayer* player);
+    void Abort();
+    Match(IReferee* referee, IPlayer* playerWhite, IPlayer* playerBlack);
     ~Match();
 };
 

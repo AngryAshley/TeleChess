@@ -1,16 +1,25 @@
 #ifndef IPLAYER_H
 #define IPLAYER_H
 
+#include "IMatch.h"
+
+#include <string>
+
+class IMatch;
+
 class IPlayer
 {
-private:
-    int playerID;
+protected:
+    int ID;
+    bool inMatch = false;
 public:
-    bool operator==(IPlayer other) const
-    {
-        return (playerID == other.playerID);
-    }
-    virtual ~IPlayer();
+    int GetID() { return this->ID; }
+    bool GetInMatch() { return inMatch; }
+    
+    virtual bool OpponentMove(std::string move) = 0;
+    virtual void EnterMatch(IMatch* match) = 0;
+    virtual void LeaveMatch() = 0;
+    virtual ~IPlayer() {}
 };
 
 #endif

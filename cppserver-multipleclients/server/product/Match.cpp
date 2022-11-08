@@ -1,15 +1,45 @@
 #include "Match.h"
 
-bool Match::TryMove(Piece* boardBefore, Piece* boardAfter, IPlayer* player)
+#include <iostream>
+
+Match::Match(IReferee* referee, IPlayer* playerWhite, IPlayer* playerBlack)
+:referee(referee)
+,playerWhite(playerWhite)
+,playerBlack(playerBlack)
 {
-    if (!(*player == players[playerToMove]))
+    playerToMove = playerWhite;
+    std::cout << "Match made between client " << playerWhite->GetID() << " and " << playerBlack->GetID() << std::endl;
+}
+
+bool Match::TryMove(std::string move, IPlayer* player)
+{ 
+    if (player != playerToMove || referee->CheckMove(move))
     {
         return false;
     }
-    if (referee.CheckMove(boardBefore, boardAfter))
+
+    if (player == playerWhite)
     {
-        return false;
+        playerBlack->OpponentMove(move);
+        playerToMove = playerBlack;
+        return true;
     }
-     
-    return true;
+    
+    if (player == playerBlack)
+    {
+        playerWhite->OpponentMove(move);
+        playerToMove = playerWhite;
+        return true;
+    }
+    return false;
+}
+
+Match::~Match()
+{
+
+}
+
+void Match::Abort()
+{
+    
 }

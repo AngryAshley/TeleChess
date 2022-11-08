@@ -22,7 +22,7 @@ int main(void)
     sa.sin_family = AF_INET;
     sa.sin_port = htons(PortNumber);
 
-    int result = inet_pton(AF_INET, "217.105.47.86", &sa.sin_addr);
+    int result = inet_pton(AF_INET, "127.0.0.1", &sa.sin_addr); //217.105.47.86
     if (result != 1)
     {
         perror("could not convert ip address to network address structure");
@@ -40,7 +40,7 @@ int main(void)
         }
 
         std::string text = "";
-        while (text != "exit")
+        while (true)
         {
             text = "";
             std::cin >> text;
@@ -49,6 +49,8 @@ int main(void)
             {
                 std::cout << "not everything is sent (" << nrBytes << "/" << text.length() << " bytes sent)\n";
             }
+            char buf[100];
+            int bytes = read(socketFd, buf, 100);
         }
 
         if (shutdown(socketFd, SHUT_RDWR) < 0)

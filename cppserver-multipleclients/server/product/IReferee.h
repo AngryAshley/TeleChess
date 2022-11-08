@@ -1,14 +1,22 @@
 #ifndef IREFEREE_H
 #define IREFEREE_H
 
-#include "Pieces.h"
+#include <string>
 
 class IReferee
 {
 public:
-    virtual bool CheckMove(Piece* boardBefore, Piece* boardAfter);
-    virtual Piece* CreateBoard();
-    virtual ~IReferee();
+    virtual bool CheckMove(std::string move) = 0;
+    virtual ~IReferee() {}
+};
+
+class MReferee : public IReferee
+{
+public:
+    bool CheckMove(std::string move)
+    {
+        return true;
+    }
 };
 
 #endif
