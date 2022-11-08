@@ -5,10 +5,34 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include <thread>
 
 const uint16_t PortNumber = 1100;
 
-int main(void)
+void Listen(int socketFd)
+{
+    while (true)
+    {
+        char buf[100] = {0};	
+        int bytes = read(socketFd, buf, 100);
+        if (bytes > 0)
+        {
+            std::cout << "received " << bytes << " bytes: " << buf << std::endl;
+        }
+        else if (bytes == 0)
+        {
+            std::cout << "connection closed" << std::endl;
+            exit(EXIT_SUCCESS);
+        }
+        else
+        {
+            perror("read failed");
+            break;
+        }
+    }
+}
+
+int main(int argc, char* argv[])
 {
     int socketFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (socketFd == -1)
@@ -22,7 +46,7 @@ int main(void)
     sa.sin_family = AF_INET;
     sa.sin_port = htons(PortNumber);
 
-    int result = inet_pton(AF_INET, "127.0.0.1", &sa.sin_addr); //217.105.47.86
+    int result = inet_pton(AF_INET, argv[1], &sa.sin_addr);
     if (result != 1)
     {
         perror("could not convert ip address to network address structure");
@@ -38,7 +62,8 @@ int main(void)
             close(socketFd);
             exit(EXIT_FAILURE);
         }
-
+        
+        std::thread listenThread = std::thread(Listen, socketFd);
         std::string text = "";
         while (true)
         {
@@ -49,8 +74,7 @@ int main(void)
             {
                 std::cout << "not everything is sent (" << nrBytes << "/" << text.length() << " bytes sent)\n";
             }
-            char buf[100];
-            int bytes = read(socketFd, buf, 100);
+            
         }
 
         if (shutdown(socketFd, SHUT_RDWR) < 0)

@@ -129,7 +129,6 @@ void ServerListener::Listen(ServerListener* sl)
                         if (sl->verbose)
                         {
                             std::cout << "From: " << sl->clients[i]->GetID() << " received " << nrBytes << " bytes: " << buf << std::endl;
-                            send(sl->clients[i]->GetID(), buf, nrBytes, 0);
                         }
 
                         std::string cmd = std::to_string(sl->clients[i]->GetID()) + " " + std::string(buf);
