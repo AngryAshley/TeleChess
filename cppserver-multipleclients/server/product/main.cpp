@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     {
         mm->checkForAvailablePlayers(ref);
     }
-    
+    // std::cin.get();
 
     delete(sl);
     return 0;

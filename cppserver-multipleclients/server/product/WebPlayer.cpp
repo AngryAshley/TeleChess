@@ -1,5 +1,7 @@
 #include "WebPlayer.h"
 
+#include <iostream>
+
 WebPlayer::WebPlayer(ServerListener* server, int ID)
 :server(server)
 {
@@ -8,6 +10,7 @@ WebPlayer::WebPlayer(ServerListener* server, int ID)
 
 WebPlayer::~WebPlayer()
 {
+    std::cout << "Player " << ID << " disconnected" << std::endl;
     if (inMatch)
     {
         match->Abort();

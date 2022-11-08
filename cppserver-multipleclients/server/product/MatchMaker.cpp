@@ -17,11 +17,12 @@ void MatchMaker::checkForAvailablePlayers(IReferee* referee)
             availablePlayers[count] = player;
             count++;
         }
+        fflush(stdout); // black magic don't touch
     }
     
     if (count == 2)
     {
-        std::cout << "2 players found \n";
+        std::cout << "2 players found " << std::endl;
         NewMatch(referee, availablePlayers[0], availablePlayers[1]);
     }
 }

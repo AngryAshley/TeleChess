@@ -13,7 +13,7 @@ Match::Match(IReferee* referee, IPlayer* playerWhite, IPlayer* playerBlack)
 
 bool Match::TryMove(std::string move, IPlayer* player)
 { 
-    if (player != playerToMove || referee->CheckMove(move))
+    if (player != playerToMove || !referee->CheckMove(move))
     {
         return false;
     }
@@ -41,5 +41,8 @@ Match::~Match()
 
 void Match::Abort()
 {
-    
+    std::cout << "Match aborted" << std::endl;
+    playerWhite->LeaveMatch();
+    playerBlack->LeaveMatch();
+    delete(this);
 }

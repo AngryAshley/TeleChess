@@ -141,14 +141,17 @@ void ServerListener::Listen(ServerListener* sl)
                     }
                     else if (nrBytes == 0)
                     {
+                        if (sl->verbose)
+                        {
+                            std::cout << "client " << sl->clients[i]->GetID() << " disconnected" << std::endl;
+                        }
                         sl->removeClient(sl->clients[i]->GetID());
                         if (sl->verbose)
                         {
-                            std::cout << "client: " << sl->clients[i] << " dropped\n";
                             std::cout << "Remaining:\n";
                             for (int j = 0; j < sl->nrClients; j++)
                             {
-                                std::cout << "\tclient: " << sl->clients[j] << std::endl;
+                                std::cout << "\tclient: " << sl->clients[j]->GetID() << std::endl;
                             }
                         }
                     }
@@ -201,6 +204,8 @@ void ServerListener::removeClient(int ID)
             if (clients[i]->GetID() == ID)
             {
                 found = true;
+                delete clients[i];
+                matchmaker->RemovePlayer(clients[i]);
                 clients[i] = clients[i + 1];
             }
         }
@@ -211,7 +216,6 @@ void ServerListener::removeClient(int ID)
     }
     if (found)
     {
-        delete(clients[nrClients--]);
         clients[nrClients--] = nullptr;
     }
 }
@@ -230,6 +234,10 @@ WebPlayer* ServerListener::getClient(int ID)
 
 bool ServerListener::Send(int clientID, std::string &message)
 {
+    if (verbose)
+    {
+        std::cout << "Sending to " << clientID << ": " << message << std::endl;
+    }
     send(clientID, message.c_str(), message.size(), 0);
     return true;
 }
