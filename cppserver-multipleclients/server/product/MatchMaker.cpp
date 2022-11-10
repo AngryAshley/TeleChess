@@ -8,16 +8,17 @@ MatchMaker::MatchMaker()
 
 void MatchMaker::checkForAvailablePlayers(IReferee* referee)
 {
-    IPlayer* availablePlayers[2];
+    const std::lock_guard<std::mutex> lock(mtx);
+    IPlayer* availablePlayers[2] = {0};
     int count = 0;
     for (auto & player : players)
     {
-        if (!player->GetInMatch() && count < 2)
-        {
-            availablePlayers[count] = player;
-            count++;
-        }
-        fflush(stdout); // black magic don't touch
+            if (!player->GetInMatch() && count < 2)
+            {
+                availablePlayers[count] = player;
+                count++;
+            }
+        
     }
     
     if (count == 2)
@@ -30,16 +31,20 @@ void MatchMaker::checkForAvailablePlayers(IReferee* referee)
 void MatchMaker::NewMatch(IReferee* referee, IPlayer* playerWhite, IPlayer* playerBlack)
 {
     Match* newMatch = new Match(referee, playerWhite, playerBlack);
-    playerWhite->EnterMatch(newMatch);
-    playerBlack->EnterMatch(newMatch);
-    matches.push_back(newMatch);
+    if (newMatch != nullptr)
+    {
+        playerWhite->EnterMatch(newMatch);
+        playerBlack->EnterMatch(newMatch);
+        matches.push_back(newMatch);
+    }
 }
 
 void MatchMaker::AddPlayer(IPlayer* newPlayer)
 {
+    const std::lock_guard<std::mutex> lock(mtx);
     for (auto & player : players)
     {
-        if (newPlayer == player)
+        if (newPlayer->GetID() == player->GetID())
         {
             return;
         }
@@ -50,6 +55,7 @@ void MatchMaker::AddPlayer(IPlayer* newPlayer)
 
 void MatchMaker::RemovePlayer(IPlayer* player)
 {
+    const std::lock_guard<std::mutex> lock(mtx);
     for (unsigned long int i = 0; i < players.size(); i++)
     {
         if (players[i] == player)

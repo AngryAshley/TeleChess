@@ -203,8 +203,8 @@ void ServerListener::removeClient(int ID)
             if (clients[i]->GetID() == ID)
             {
                 found = true;
-                delete clients[i];
                 matchmaker->RemovePlayer(clients[i]);
+                delete clients[i];
                 clients[i] = clients[i + 1];
             }
         }

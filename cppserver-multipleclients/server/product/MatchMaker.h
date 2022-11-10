@@ -5,12 +5,14 @@
 #include "IMatch.h"
 
 #include <vector>
+#include <mutex>
 
 class MatchMaker
 {
 private:
     std::vector<Match*> matches;
     std::vector<IPlayer*> players;
+    std::mutex mtx;
 public:
     void checkForAvailablePlayers(IReferee* referee);
     void AddPlayer(IPlayer* player);
