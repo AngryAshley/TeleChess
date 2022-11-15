@@ -15,5 +15,19 @@
 #define MAX_ITEM_SIZE 10
 #define ITEMS_IN_MENU 3
 
+enum NetworkState
+{
+  Disconnected,
+  NetworkConnected,
+  HostConnected
+};
+
+enum MenuState
+{
+  MainMenu,
+  ValueEncoder,
+  MessageSubMenu,
+  NetworkSubMenu
+};
 
 #endif
