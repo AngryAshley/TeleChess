@@ -13,10 +13,6 @@ ServerListener::ServerListener(uint16_t portNumber, bool verbose, MatchMaker* ma
 ,matchmaker(matchmaker)
 {
     nrClients = 0;
-    // for (int i = 0; i < MAX_CLIENTS; i++)
-    // {
-    //     clients[i] = 0;
-    // }
     isListening = true;
     Start();
 }
