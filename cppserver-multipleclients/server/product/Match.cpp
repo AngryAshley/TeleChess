@@ -41,7 +41,7 @@ Match::~Match()
 
 void Match::Abort()
 {
-    std::cout << "Match aborted" << std::endl;
+    std::cout << "\33[0;32mMatch aborted\33[0m" << std::endl;
     playerWhite->LeaveMatch();
     playerBlack->LeaveMatch();
     delete(this);

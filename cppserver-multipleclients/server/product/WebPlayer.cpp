@@ -10,7 +10,7 @@ WebPlayer::WebPlayer(ServerListener* server, int ID)
 
 WebPlayer::~WebPlayer()
 {
-    std::cout << "Player " << ID << " disconnected" << std::endl;
+    std::cout << "\33[4;31mPlayer " << ID << " disconnected\33[0m" << std::endl;
     if (inMatch)
     {
         match->Abort();

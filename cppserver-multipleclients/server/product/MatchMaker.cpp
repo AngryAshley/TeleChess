@@ -49,7 +49,7 @@ void MatchMaker::AddPlayer(IPlayer* newPlayer)
             return;
         }
     }
-    std::cout << "Player added " << newPlayer->GetID() << std::endl;
+    std::cout << "\033[4;32mPlayer added " << newPlayer->GetID() << "\033[0m" << std::endl;
     players.push_back(newPlayer);
 }
 
