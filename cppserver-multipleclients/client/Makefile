@@ -18,10 +18,10 @@ $(PROD_EXEC): Makefile $(PROD_FILES)  $(HEADER_FILES)
 	@$(CC) $(PROD_INC_DIRS) $(SYMBOLS) $(PROD_FILES) -o $(BUILD_DIR)/$(PROD_EXEC)
 
 run: $(PROD_EXEC)
-	@./$(BUILD_DIR)/$(PROD_EXEC)
+	@./$(BUILD_DIR)/$(PROD_EXEC) 217.105.47.86
 
-verbose: $(PROD_EXEC)
-	@./$(BUILD_DIR)/$(PROD_EXEC) v
+local: $(PROD_EXEC)
+	@./$(BUILD_DIR)/$(PROD_EXEC) 127.0.0.1
 
 clean:
 	rm -rf $(BUILD_DIR)/$(PROD_EXEC)*

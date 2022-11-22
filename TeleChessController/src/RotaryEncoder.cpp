@@ -11,9 +11,9 @@ RotaryEncoder::RotaryEncoder(int PinA,int PinB,int PinSW)
 
 void RotaryEncoder::INIT()
 {
-    pinMode(PinA, INPUT);
-    pinMode(PinB, INPUT);
-    pinMode(PinSW, INPUT);
+    pinMode(PinA, INPUT_PULLUP);
+    pinMode(PinB, INPUT_PULLUP);
+    pinMode(PinSW, INPUT_PULLUP);
 
     readingMask = (0x1 << PinA) | (0x1 << PinB);
 }
@@ -57,7 +57,17 @@ void RotaryEncoder::SetSwitch()
     ButtonPressed = true;
 }
 
-int16_t RotaryEncoder::GetCount()
+void RotaryEncoder::SetCount(uint16_t count)
+{
+    encCount = count;   
+}
+
+void RotaryEncoder::ResetCount()
+{
+    encCount = 0;
+}
+
+uint16_t RotaryEncoder::GetCount()
 {
     oldEncCount = encCount;
     return encCount;
