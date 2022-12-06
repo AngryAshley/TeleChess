@@ -1,8 +1,7 @@
 #ifndef SERVERLISTENER_H
 #define SERVERLISTENER_H
 
-#include "WebPlayer.h"
-#include "MatchMaker.h"
+#include "MessageInterpreter.h"
 
 #include <arpa/inet.h>
 #include <thread>
@@ -10,24 +9,22 @@
 
 #define MAX_CLIENTS 40
 
-class WebPlayer;
 
 class ServerListener
 {
 private:
     const uint16_t portNumber;
     const bool verbose;
-    MatchMaker* matchmaker;
+    MessageInterpreter interpreter;
 
     fd_set sockets;
     int connectionSocket;
     struct sockaddr_in address;
 
-    WebPlayer* clients[MAX_CLIENTS];
+    int clients[MAX_CLIENTS];
     int nrClients;
     int addClient(int client);
     void removeClient(int client);
-    WebPlayer* getClient(int client);
 
     std::thread listeningThread;
     std::vector<std::string> messageQueue;

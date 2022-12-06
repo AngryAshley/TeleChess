@@ -7,10 +7,9 @@
 #include <sys/select.h>
 #include <unistd.h>
 
-ServerListener::ServerListener(uint16_t portNumber, bool verbose, MatchMaker* matchmaker)
+ServerListener::ServerListener(uint16_t portNumber, bool verbose)
 :portNumber(portNumber)
 ,verbose(verbose)
-,matchmaker(matchmaker)
 {
     nrClients = 0;
     isListening = true;
@@ -115,10 +114,10 @@ void ServerListener::Listen(ServerListener* sl)
             }
             for (int i = 0; i < sl->nrClients; i++)
             {
-                if (FD_ISSET(sl->clients[i]->GetID(), &sockets))
+                if (FD_ISSET(sl->clients[i], &sockets))
                 {
                     char buf[100];
-                    int nrBytes = read(sl->clients[i]->GetID(), buf, 99);
+                    int nrBytes = read(sl->clients[i], buf, 99);
                     if (nrBytes > 0)
                     {
                         buf[nrBytes] = '\0';
@@ -127,18 +126,13 @@ void ServerListener::Listen(ServerListener* sl)
                             std::cout << "From: " << sl->clients[i]->GetID() << " received " << nrBytes << " bytes: " << buf << std::endl;
                         }
 
-                        std::string cmd = std::to_string(sl->clients[i]->GetID()) + " " + std::string(buf);
-                        if (sl->clients[i]->GetInMatch())
-                        {
-                            sl->clients[i]->Move(cmd);
-                        }
-                        sl->messageQueue.insert(sl->messageQueue.begin(), cmd);
+                        interpreter.Receive(buf);
                     }
                     else if (nrBytes == 0)
                     {
                         if (sl->verbose)
                         {
-                            std::cout << "client " << sl->clients[i]->GetID() << " disconnected" << std::endl;
+                            std::cout << "client " << sl->clients[i] << " disconnected" << std::endl;
                         }
                         sl->removeClient(sl->clients[i]->GetID());
                         if (sl->verbose)
@@ -146,7 +140,7 @@ void ServerListener::Listen(ServerListener* sl)
                             std::cout << "Remaining:\n";
                             for (int j = 0; j < sl->nrClients; j++)
                             {
-                                std::cout << "\tclient: " << sl->clients[j]->GetID() << std::endl;
+                                std::cout << "\tclient: " << sl->clients[j] << std::endl;
                             }
                         }
                     }
@@ -184,8 +178,7 @@ int ServerListener::addClient(int ID)
     {
         return -1;
     }
-    clients[nrClients++] = new WebPlayer(this, ID);
-    matchmaker->AddPlayer(clients[nrClients - 1]);
+    clients[nrClients++] = ID;
     return 0;
 }
 
@@ -196,11 +189,9 @@ void ServerListener::removeClient(int ID)
     {
         if (!found)
         {
-            if (clients[i]->GetID() == ID)
+            if (clients[i] == ID)
             {
                 found = true;
-                matchmaker->RemovePlayer(clients[i]);
-                delete clients[i];
                 clients[i] = clients[i + 1];
             }
         }
@@ -211,20 +202,8 @@ void ServerListener::removeClient(int ID)
     }
     if (found)
     {
-        clients[nrClients--] = nullptr;
+        clients[nrClients--] = 0;
     }
-}
-
-WebPlayer* ServerListener::getClient(int ID)
-{
-    for (int i = 0; i < nrClients; i++)
-    {
-        if (clients[i]->GetID() == ID)
-        {
-            return clients[i];
-        }
-    }
-    return nullptr;
 }
 
 bool ServerListener::Send(int clientID, std::string &message)
