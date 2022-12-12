@@ -3,6 +3,7 @@
 
 #include "Match.h"
 #include "IMatch.h"
+#include "MatchRequest.h"
 
 #include <vector>
 #include <mutex>
@@ -11,14 +12,16 @@ class MatchMaker
 {
 private:
     std::vector<Match*> matches;
-    std::vector<IPlayer*> players;
+    std::vector<MatchRequest> requests;
     std::mutex mtx;
+    MatchRequest* findRequest(IPlayer* player);
+    IPlayer* findPlayer(int userID);
+    void NewMatch(MatchRequest request, IPlayer* opponent);
 public:
-    void checkForAvailablePlayers(IReferee* referee);
-    void AddPlayer(IPlayer* player);
-    void RemovePlayer(IPlayer* player);
+
     MatchMaker();
-    void NewMatch(IReferee* referee, IPlayer* playerWhite, IPlayer* playerBlack);
+    void NewMatchRequest(IReferee* referee, IPlayer* player, bool startAsWhite);
+    bool JoinMatch(int userId, IPlayer* player);
     ~MatchMaker();
 };
 

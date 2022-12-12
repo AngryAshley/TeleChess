@@ -2,6 +2,7 @@
 #define SERVERLISTENER_H
 
 #include "MessageInterpreter.h"
+#include "IMessenger.h"
 
 #include <arpa/inet.h>
 #include <thread>
@@ -10,7 +11,7 @@
 #define MAX_CLIENTS 40
 
 
-class ServerListener
+class ServerListener : IMessenger
 {
 private:
     const uint16_t portNumber;
@@ -34,7 +35,7 @@ private:
     bool isListening;
     void Stop();
 public:
-    ServerListener(uint16_t portNumber, bool verbose, MatchMaker* matchmaker);
+    ServerListener(uint16_t portNumber, bool verbose);
     bool Available();
     std::string GetCommand();
     bool Send(int clientID, std::string &message);

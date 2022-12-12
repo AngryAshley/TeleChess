@@ -68,7 +68,7 @@ void ServerListener::Listen(ServerListener* sl)
 
         for (int i = 0; i < sl->nrClients; i++)
         {
-            FD_SET(sl->clients[i]->GetID(), &sockets);
+            FD_SET(sl->clients[i], &sockets);
         }
 
         struct timeval timeout;
@@ -123,10 +123,10 @@ void ServerListener::Listen(ServerListener* sl)
                         buf[nrBytes] = '\0';
                         if (sl->verbose)
                         {
-                            std::cout << "From: " << sl->clients[i]->GetID() << " received " << nrBytes << " bytes: " << buf << std::endl;
+                            std::cout << "From: " << sl->clients[i] << " received " << nrBytes << " bytes: " << buf << std::endl;
                         }
 
-                        interpreter.Receive(buf);
+                        sl->interpreter.Receive(buf, sl->clients[i]);
                     }
                     else if (nrBytes == 0)
                     {
@@ -134,7 +134,7 @@ void ServerListener::Listen(ServerListener* sl)
                         {
                             std::cout << "client " << sl->clients[i] << " disconnected" << std::endl;
                         }
-                        sl->removeClient(sl->clients[i]->GetID());
+                        sl->removeClient(sl->clients[i]);
                         if (sl->verbose)
                         {
                             std::cout << "Remaining:\n";
@@ -154,22 +154,6 @@ void ServerListener::Stop()
 {
     isListening = false;
     listeningThread.join();
-}
-
-bool ServerListener::Available()
-{
-    return !(messageQueue.empty());
-}
-
-std::string ServerListener::GetCommand()
-{
-    if (Available())
-    {
-        std::string cmd = messageQueue.back();
-        messageQueue.pop_back();
-        return cmd;
-    }
-    return NULL;
 }
 
 int ServerListener::addClient(int ID)
@@ -219,9 +203,4 @@ bool ServerListener::Send(int clientID, std::string &message)
 ServerListener::~ServerListener()
 {
     Stop();
-
-    for (int i = 0; i < nrClients; i++)
-    {
-        delete(clients[i]);
-    }
 }

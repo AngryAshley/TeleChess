@@ -3,20 +3,23 @@
 
 #include "IPlayer.h"
 #include "IMatch.h"
-#include "ServerListener.h"
+#include "IMessenger.h"
 
 
-class ServerListener;
 
 class WebPlayer : public IPlayer
 {
 private:
-    ServerListener* server;
+    IMessenger* server;
+    int clientNumber;
     IMatch* match;
+    bool alive;
 public:
-    WebPlayer(ServerListener* server, int ID);
+    WebPlayer(IMessenger* server, int ID, int clientNumber);
     bool Move(std::string move);
     bool OpponentMove(std::string move);
+
+    void Revive(int clientNr);
 
     void EnterMatch(IMatch* match);
     void LeaveMatch();

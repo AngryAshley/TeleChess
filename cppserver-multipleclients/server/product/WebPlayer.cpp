@@ -2,10 +2,12 @@
 
 #include <iostream>
 
-WebPlayer::WebPlayer(ServerListener* server, int ID)
+WebPlayer::WebPlayer(IMessenger* server, int ID, int clientNumber)
 :server(server)
+,clientNumber(clientNumber)
 {
     this->ID = ID;
+    alive = true;
 }
 
 WebPlayer::~WebPlayer()
@@ -37,4 +39,10 @@ bool WebPlayer::Move(std::string move)
 bool WebPlayer::OpponentMove(std::string move)
 {
     return server->Send(GetID(), move);
+}
+
+void WebPlayer::Revive(int clientNr)
+{
+    alive = true;
+    clientNumber = clientNr;
 }

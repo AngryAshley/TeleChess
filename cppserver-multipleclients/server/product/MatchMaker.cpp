@@ -6,61 +6,64 @@ MatchMaker::MatchMaker()
     
 }
 
-void MatchMaker::checkForAvailablePlayers(IReferee* referee)
+
+
+void MatchMaker::NewMatch(MatchRequest request, IPlayer* opponent)
 {
     const std::lock_guard<std::mutex> lock(mtx);
-    IPlayer* availablePlayers[2] = {0};
-    int count = 0;
-    for (auto & player : players)
+    Match* newMatch = nullptr;
+    if (request.getStartAsWhite())
     {
-            if (!player->GetInMatch() && count < 2)
-            {
-                availablePlayers[count] = player;
-                count++;
-            }
-        
-    }
-    
-    if (count == 2)
-    {
-        std::cout << "2 players found " << std::endl;
-        NewMatch(referee, availablePlayers[0], availablePlayers[1]);
-    }
-}
+        newMatch = new Match(request.getReferee(), request.getPlayer(), opponent);
 
-void MatchMaker::NewMatch(IReferee* referee, IPlayer* playerWhite, IPlayer* playerBlack)
-{
-    Match* newMatch = new Match(referee, playerWhite, playerBlack);
+    }
+    else
+    {
+        newMatch = new Match(request.getReferee(), opponent, request.getPlayer());
+    }
+
     if (newMatch != nullptr)
     {
-        playerWhite->EnterMatch(newMatch);
-        playerBlack->EnterMatch(newMatch);
         matches.push_back(newMatch);
     }
 }
 
-void MatchMaker::AddPlayer(IPlayer* newPlayer)
+void MatchMaker::NewMatchRequest(IReferee* referee, IPlayer* player, bool startAsWhite)
 {
     const std::lock_guard<std::mutex> lock(mtx);
-    for (auto & player : players)
+    if(findRequest(player) == nullptr)
     {
-        if (newPlayer->GetID() == player->GetID())
-        {
-            return;
-        }
+        return;
     }
-    std::cout << "\033[4;32mPlayer added " << newPlayer->GetID() << "\033[0m" << std::endl;
-    players.push_back(newPlayer);
+    MatchRequest newRequest = MatchRequest(referee, player, startAsWhite);
+    requests.push_back(newRequest);
 }
 
-void MatchMaker::RemovePlayer(IPlayer* player)
+MatchRequest* MatchMaker::findRequest(IPlayer* player)
 {
-    const std::lock_guard<std::mutex> lock(mtx);
-    for (unsigned long int i = 0; i < players.size(); i++)
+    for (auto & request : requests)
     {
-        if (players[i] == player)
+        if (request.getPlayer() == player)
         {
-            players.erase(players.begin() + i);
+            return &request;
         }
     }
+    return nullptr;
+}
+
+bool MatchMaker::JoinMatch(int userId, IPlayer* player)
+{
+    IPlayer* opponent = findPlayer(userId);
+    if (opponent == nullptr)
+    {
+        return false;
+    }
+
+    MatchRequest* request = findRequest(opponent);
+    if (request == nullptr)
+    {
+        return false;
+    }
+
+    NewMatch(*request, player);
 }

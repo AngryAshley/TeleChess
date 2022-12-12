@@ -8,6 +8,8 @@ Match::Match(IReferee* referee, IPlayer* playerWhite, IPlayer* playerBlack)
 ,playerBlack(playerBlack)
 {
     playerToMove = playerWhite;
+    playerWhite->EnterMatch(this);
+    playerBlack->EnterMatch(this);
     std::cout << "Match made between client " << playerWhite->GetID() << " and " << playerBlack->GetID() << std::endl;
 }
 
