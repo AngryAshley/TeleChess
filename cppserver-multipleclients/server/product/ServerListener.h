@@ -16,7 +16,7 @@ class ServerListener : IMessenger
 private:
     const uint16_t portNumber;
     const bool verbose;
-    MessageInterpreter interpreter;
+    MessageInterpreter* interpreter;
 
     fd_set sockets;
     int connectionSocket;
@@ -35,10 +35,10 @@ private:
     bool isListening;
     void Stop();
 public:
-    ServerListener(uint16_t portNumber, bool verbose);
+    ServerListener(uint16_t portNumber, bool verbose, MatchMaker* MatchMaker);
     bool Available();
     std::string GetCommand();
-    bool Send(int clientID, std::string &message);
+    bool Send(int clientID, std::string message);
     ~ServerListener();
 };
 

@@ -15,14 +15,13 @@ private:
     std::vector<MatchRequest> requests;
     std::mutex mtx;
     MatchRequest* findRequest(IPlayer* player);
-    IPlayer* findPlayer(int userID);
     void NewMatch(MatchRequest request, IPlayer* opponent);
 public:
 
     MatchMaker();
+    IPlayer* findPlayer(int userID);
     void NewMatchRequest(IReferee* referee, IPlayer* player, bool startAsWhite);
-    bool JoinMatch(int userId, IPlayer* player);
-    ~MatchMaker();
+    bool JoinMatch(IPlayer* opponent, IPlayer* player);
 };
 
 #endif

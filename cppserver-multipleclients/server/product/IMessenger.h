@@ -7,7 +7,7 @@ class IMessenger
 {
 public:
     virtual bool Send(int clientSocket, std::string message) = 0;
-    virtual ~IMessenger();
+    virtual ~IMessenger(){}
 };
 
 #endif

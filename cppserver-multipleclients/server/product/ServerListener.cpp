@@ -7,12 +7,13 @@
 #include <sys/select.h>
 #include <unistd.h>
 
-ServerListener::ServerListener(uint16_t portNumber, bool verbose)
+ServerListener::ServerListener(uint16_t portNumber, bool verbose, MatchMaker* matchMaker)
 :portNumber(portNumber)
 ,verbose(verbose)
 {
     nrClients = 0;
     isListening = true;
+    interpreter = new MessageInterpreter(matchMaker, this);
     Start();
 }
 
@@ -126,7 +127,7 @@ void ServerListener::Listen(ServerListener* sl)
                             std::cout << "From: " << sl->clients[i] << " received " << nrBytes << " bytes: " << buf << std::endl;
                         }
 
-                        sl->interpreter.Receive(buf, sl->clients[i]);
+                        sl->interpreter->Receive(buf, sl->clients[i]);
                     }
                     else if (nrBytes == 0)
                     {
@@ -190,7 +191,7 @@ void ServerListener::removeClient(int ID)
     }
 }
 
-bool ServerListener::Send(int clientID, std::string &message)
+bool ServerListener::Send(int clientID, std::string message)
 {
     if (verbose)
     {

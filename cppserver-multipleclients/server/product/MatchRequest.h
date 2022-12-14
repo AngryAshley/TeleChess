@@ -7,8 +7,8 @@
 class MatchRequest
 {
 private:
-    IPlayer* player;
     IReferee* referee;
+    IPlayer* player;
     bool startAsWhite;
 
 public:
@@ -16,7 +16,7 @@ public:
     IReferee* getReferee() { return referee; }
     bool getStartAsWhite() { return startAsWhite; }
     MatchRequest(IReferee* referee, IPlayer* player, bool startAsWhite);
-    ~MatchRequest();
+    // ~MatchRequest(){}
 };
 
 

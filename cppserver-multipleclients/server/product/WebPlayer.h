@@ -18,6 +18,7 @@ public:
     WebPlayer(IMessenger* server, int ID, int clientNumber);
     bool Move(std::string move);
     bool OpponentMove(std::string move);
+    int getClientNr();
 
     void Revive(int clientNr);
 

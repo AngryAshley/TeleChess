@@ -51,10 +51,9 @@ MatchRequest* MatchMaker::findRequest(IPlayer* player)
     return nullptr;
 }
 
-bool MatchMaker::JoinMatch(int userId, IPlayer* player)
+bool MatchMaker::JoinMatch(IPlayer* opponent, IPlayer* player)
 {
-    IPlayer* opponent = findPlayer(userId);
-    if (opponent == nullptr)
+    if (opponent == nullptr || player == nullptr)
     {
         return false;
     }
@@ -66,4 +65,5 @@ bool MatchMaker::JoinMatch(int userId, IPlayer* player)
     }
 
     NewMatch(*request, player);
+    return true;
 }

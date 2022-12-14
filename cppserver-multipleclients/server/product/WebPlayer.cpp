@@ -33,12 +33,21 @@ void WebPlayer::LeaveMatch()
 
 bool WebPlayer::Move(std::string move)
 {
-    return match->TryMove(move, this);
+    if (inMatch)
+    {
+        return match->TryMove(move, this);
+    }
+    return false;
 }
 
 bool WebPlayer::OpponentMove(std::string move)
 {
     return server->Send(GetID(), move);
+}
+
+int WebPlayer::getClientNr()
+{
+    return clientNumber;
 }
 
 void WebPlayer::Revive(int clientNr)

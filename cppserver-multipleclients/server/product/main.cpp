@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     ServerListener* sl;
     MatchMaker* mm = new MatchMaker();
-    MReferee* ref = new MReferee();
+    
 
     if (argc > 1 && *argv[1] == 'v')
     {
@@ -18,11 +18,7 @@ int main(int argc, char *argv[])
         sl = new ServerListener(1100, false, mm);
     }
     
-    while (true)
-    {
-        mm->checkForAvailablePlayers(ref);
-    }
-    // std::cin.get();
+    std::cin.get();
 
     delete(sl);
     return 0;

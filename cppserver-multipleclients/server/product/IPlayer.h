@@ -17,6 +17,7 @@ public:
     bool GetInMatch() { return inMatch; }
     
     virtual bool OpponentMove(std::string move) = 0;
+    virtual bool Move(std::string move) = 0;
     virtual void EnterMatch(IMatch* match) = 0;
     virtual void LeaveMatch() = 0;
     virtual ~IPlayer() {}
