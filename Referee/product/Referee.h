@@ -20,7 +20,7 @@ class Referee{
         g,
         h, };
         char PieceAt(char chessboard[][COLUMN_SIZE], char pos[MIN_MOVE_SIZE]);
-        int CheckMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE], char* msg, int max_size);
+        int CheckMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]);
         int PlayMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]);
 };
 #endif

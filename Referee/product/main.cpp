@@ -89,6 +89,16 @@ int main(){
     
     // cout << "After  move:" << endl;
     // DisplayBoard(chessboard);
+    while(1){
+        cout << "Enter move: ";
+        cin >> chessboardmove;
+        if(ref.CheckMove(chessboard, chessboardmove) == false){
+            cout << "Invalid move" << endl;
+            continue;
+        }
+        ref.PlayMove(chessboard, chessboardmove);
+        DisplayBoard(chessboard);
+    }
 
     return 0;
 }

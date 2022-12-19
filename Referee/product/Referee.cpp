@@ -13,7 +13,7 @@ char Referee::PieceAt(char chessboard[][COLUMN_SIZE], char pos[MIN_MOVE_SIZE]){
    
 }
 
-int Referee::CheckMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE], char* msg, int max_size){
+int Referee::CheckMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]){
     
     char posPiece[MIN_MOVE_SIZE];
     sprintf(posPiece, "%c%d", move[0], move[1]);
@@ -21,11 +21,37 @@ int Referee::CheckMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]
     cout <<"pospiece: "<< posPiece << endl;
     char currPiece = PieceAt(chessboard, posPiece);
     cout <<"curpiece: "<< currPiece << endl;
+    // char piece = currPiece;
+    // switch (piece)
+    // {
+    // case 'r':
+    // case 'R':
+    //     //check if move is valid for rook
+    //     if(move[0] == move[2] || move[1] == move[3]){
+    //         return 1;
+    //     }
+    //     break;
+    // case 'b':
+    // case 'B':
+    //     //check if move is valid for bishop
+    //     if(move[0] - move[2] == move[1] - move[3]){
+    //         return 1;
+    //     }
+    //     break;
+    // case 'q':
+    // case 'Q':
+    //     //check if move is valid for queen
+    //     if(move[0] == move[2] || move[1] == move[3] || move[0] - move[2] == move[1] - move[3]){
+    //         return 1;
+    //     }
+    //     break;
+    // default:
+    //     break;
+    // }
     return 1;
 }
 
 int Referee::PlayMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]){
-    char msg[MAX_MSG_SIZE];
     int from_row = move[1] - '0' - 1;
     int from_col = move[0] - 'a';
     int to_row = move[3] - '0' - 1;
@@ -34,9 +60,9 @@ int Referee::PlayMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE])
         cout << "No piece at that location" << endl;
         return -1;
     }
-    int outputmove = CheckMove(chessboard , move, msg, MAX_MSG_SIZE);
+    int outputmove = CheckMove(chessboard, move);
     cout << outputmove;
-    if(outputmove!= 1 ){
+    if(outputmove != 1 ){
         cout << "Move not valid" << endl;
         return 0;
     }
