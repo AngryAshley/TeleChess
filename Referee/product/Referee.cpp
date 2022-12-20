@@ -6,49 +6,59 @@ using namespace std;
 char Referee::PieceAt(char chessboard[][COLUMN_SIZE], char pos[MIN_MOVE_SIZE]){
     char tempLetter = pos[0];
     int  tempNr = ((((int)pos[1] - 48)*10) + ((int)pos[2] -48) -49); //goofy code om 2 char uit pos te veranderen naar een int
-    cout << "tempnr: "<< tempNr << endl;
     chessboard_collumns currCol = static_cast<chessboard_collumns>(tempLetter); //97 want ja dan werkt t eenmaal
-    cout << "currcol: " << (currCol-97) << endl;
     return chessboard[tempNr][currCol-97];
    
 }
 
 int Referee::CheckMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]){
-    
     char posPiece[MIN_MOVE_SIZE];
     sprintf(posPiece, "%c%d", move[0], move[1]);
-
-    cout <<"pospiece: "<< posPiece << endl;
     char currPiece = PieceAt(chessboard, posPiece);
-    cout <<"curpiece: "<< currPiece << endl;
-    // char piece = currPiece;
-    // switch (piece)
-    // {
-    // case 'r':
-    // case 'R':
-    //     //check if move is valid for rook
-    //     if(move[0] == move[2] || move[1] == move[3]){
-    //         return 1;
-    //     }
-    //     break;
-    // case 'b':
-    // case 'B':
-    //     //check if move is valid for bishop
-    //     if(move[0] - move[2] == move[1] - move[3]){
-    //         return 1;
-    //     }
-    //     break;
-    // case 'q':
-    // case 'Q':
-    //     //check if move is valid for queen
-    //     if(move[0] == move[2] || move[1] == move[3] || move[0] - move[2] == move[1] - move[3]){
-    //         return 1;
-    //     }
-    //     break;
-    // default:
-    //     break;
-    // }
-    return 1;
+    int returnval;
+    switch (currPiece){
+        case 'r':
+        case 'R':
+            //check if move is valid for rook
+            returnval = (move[0] == move[2] || move[1] == move[3]);
+            break;
+        case 'n':
+        case 'N':
+        {
+            int dx = abs(move[0] - move[2]);
+            int dy = abs(move[1] - move[3]);
+            returnval = ((dx == 2 && dy == 1) || (dx == 1 && dy == 2));
+            break;
+        }
+        case 'b':
+        case 'B':
+            //check if move is valid for bishop
+            returnval = (move[0] - move[2] == move[1] - move[3]);
+            break;
+        
+        case 'q':
+        case 'Q':
+            //check if move is valid for queen
+            returnval = ((move[0] == move[2] || move[1] == move[3] || abs(move[0] - move[2]) == abs(move[1] - move[3])));
+            break;
+        case 'k':
+        case 'K':
+        {
+            int dx = abs(move[0] - move[2]);
+            int dy = abs(move[1] - move[3]);
+            returnval = (dx <= 1 && dy <= 1);
+            break;
+        }
+        case 'p':
+        case 'P':
+        {
+            
+        }
+        default:
+            returnval = -1;
+            break;
+    }   
+    return returnval;
 }
 
 int Referee::PlayMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]){
@@ -61,7 +71,6 @@ int Referee::PlayMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE])
         return -1;
     }
     int outputmove = CheckMove(chessboard, move);
-    cout << outputmove;
     if(outputmove != 1 ){
         cout << "Move not valid" << endl;
         return 0;

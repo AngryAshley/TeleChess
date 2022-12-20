@@ -10,6 +10,7 @@ enum turnColor{
     NONE};
 
 void DisplayBoard(char chessboard[ROW_SIZE][COLUMN_SIZE]){
+    cout << endl;
     for (int i = 0; i < ROW_SIZE; i++)
     {
         for(int j = 0; j < COLUMN_SIZE; j++)
@@ -71,24 +72,9 @@ void FillBoard(char chessboard[ROW_SIZE][COLUMN_SIZE]){
 
 int main(){
     char chessboard[ROW_SIZE][COLUMN_SIZE] = {};
-
     FillBoard(chessboard);
-
-    char chessboardmove[5] = "a8b4";
-    //char chessboardmove2[5] = "g7c5";
-
-    cout << "Before move " << chessboardmove <<":" << endl;
     DisplayBoard(chessboard);
-    ref.PlayMove(chessboard, chessboardmove);
-    
-    cout << "After  move:" << endl;
-    DisplayBoard(chessboard);
-    
-    // cout << "Before move " << chessboardmove2 <<":" << endl;
-    // PlayMove(chessboard, chessboardmove2);
-    
-    // cout << "After  move:" << endl;
-    // DisplayBoard(chessboard);
+    char chessboardmove[5] = "";
     while(1){
         cout << "Enter move: ";
         cin >> chessboardmove;
