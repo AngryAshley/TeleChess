@@ -10,6 +10,12 @@
 class Referee{
     private:
     public:
+        enum turnColor{  
+        WHITE,
+        BLACK, 
+        };
+
+       
         enum chessboard_collumns{
         a,
         b,
@@ -18,9 +24,13 @@ class Referee{
         e,
         f,
         g,
-        h, };
+        h,};
+
+        turnColor tColor;
+        Referee ();
         char PieceAt(char chessboard[][COLUMN_SIZE], char pos[MIN_MOVE_SIZE]);
-        int CheckMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]);
+        int CheckCollision(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]);
+        int CheckIfMoveAllowed(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]);
         int PlayMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]);
 };
 #endif

@@ -4,10 +4,6 @@
 using namespace std;
 
 Referee ref;
-enum turnColor{ 
-    BLACK, 
-    WHITE, 
-    NONE};
 
 void DisplayBoard(char chessboard[ROW_SIZE][COLUMN_SIZE]){
     cout << endl;
@@ -25,28 +21,28 @@ void FillBoard(char chessboard[ROW_SIZE][COLUMN_SIZE]){
     // white= p: pawn, r: rook, n: knight, b: bishop, q: queen, k: king
     // black= P: pawn, R: rook, N: knight, B: bishop, Q: queen, K: king
     // white
-    chessboard[0][ref.a] = 'r';
-    chessboard[0][ref.b] = 'n';
-    chessboard[0][ref.c] = 'b';
-    chessboard[0][ref.d] = 'q';
-    chessboard[0][ref.e] = 'k';
-    chessboard[0][ref.f] = 'b';
-    chessboard[0][ref.g] = 'n';
-    chessboard[0][ref.h] = 'r';
+    chessboard[0][Referee::a] = 'r';
+    chessboard[0][Referee::b] = 'n';
+    chessboard[0][Referee::c] = 'b';
+    chessboard[0][Referee::d] = 'q';
+    chessboard[0][Referee::e] = 'k';
+    chessboard[0][Referee::f] = 'b';
+    chessboard[0][Referee::g] = 'n';
+    chessboard[0][Referee::h] = 'r';
     for(int i = 0; i < ROW_SIZE; i++){
         chessboard[1][i] = 'p';
     }
     // blackcl
-    chessboard[7][ref.a] = 'R';
-    chessboard[7][ref.b] = 'N';
-    chessboard[7][ref.c] = 'B';
-    chessboard[7][ref.d] = 'Q';
-    chessboard[7][ref.e] = 'K';
-    chessboard[7][ref.f] = 'B';
-    chessboard[7][ref.g] = 'N';
-    chessboard[7][ref.h] = 'R';
+    chessboard[7][Referee::a] = 'R';
+    chessboard[7][Referee::b] = 'N';
+    chessboard[7][Referee::c] = 'B';
+    chessboard[7][Referee::d] = 'Q';
+    chessboard[7][Referee::e] = 'K';
+    chessboard[7][Referee::f] = 'B';
+    chessboard[7][Referee::g] = 'N';
+    chessboard[7][Referee::h] = 'R';
     for(int i = 0; i <ROW_SIZE ; i++){
-        chessboard[ref.g][i] = 'P';
+        chessboard[Referee::g][i] = 'P';
     }
 
     //fill empty spaces with '_'
@@ -78,10 +74,12 @@ int main(){
     while(1){
         cout << "Enter move: ";
         cin >> chessboardmove;
-        if(ref.CheckMove(chessboard, chessboardmove) == false){
+        if(ref.CheckIfMoveAllowed(chessboard, chessboardmove) == 0){
             cout << "Invalid move" << endl;
             continue;
         }
+        ref.tColor = (ref.tColor == Referee::WHITE) ? Referee::BLACK : Referee::WHITE;
+        cout << ref.tColor << endl;
         ref.PlayMove(chessboard, chessboardmove);
         DisplayBoard(chessboard);
     }
