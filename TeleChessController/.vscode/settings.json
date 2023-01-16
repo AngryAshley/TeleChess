@@ -2,6 +2,12 @@
     "files.associations": {
         "functional": "cpp",
         "type_traits": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "*.tcc": "cpp",
+        "limits": "cpp",
+        "random": "cpp",
+        "istream": "cpp",
+        "streambuf": "cpp",
+        "connectionmanager.h": "c"
     }
 }
