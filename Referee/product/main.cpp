@@ -17,6 +17,7 @@ void DisplayBoard(char chessboard[ROW_SIZE][COLUMN_SIZE]){
     }
     cout << endl;
 }
+
 void FillBoard(char chessboard[ROW_SIZE][COLUMN_SIZE]){
     // white= p: pawn, r: rook, n: knight, b: bishop, q: queen, k: king
     // black= P: pawn, R: rook, N: knight, B: bishop, Q: queen, K: king

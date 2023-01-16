@@ -32,5 +32,6 @@ class Referee{
         int CheckCollision(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]);
         int CheckIfMoveAllowed(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]);
         int PlayMove(char chessboard[][COLUMN_SIZE] , char move[MAX_MOVE_SIZE]);
+        bool SameColor(char chessboard[][COLUMN_SIZE], char move[MAX_MOVE_SIZE]);
 };
 #endif
