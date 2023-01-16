@@ -21,28 +21,28 @@ void FillBoard(char chessboard[ROW_SIZE][COLUMN_SIZE]){
     // white= p: pawn, r: rook, n: knight, b: bishop, q: queen, k: king
     // black= P: pawn, R: rook, N: knight, B: bishop, Q: queen, K: king
     // white
-    chessboard[0][Referee::a] = 'r';
-    chessboard[0][Referee::b] = 'n';
-    chessboard[0][Referee::c] = 'b';
-    chessboard[0][Referee::d] = 'q';
-    chessboard[0][Referee::e] = 'k';
-    chessboard[0][Referee::f] = 'b';
-    chessboard[0][Referee::g] = 'n';
-    chessboard[0][Referee::h] = 'r';
+    chessboard[0][Referee::a] = 'R';
+    chessboard[0][Referee::b] = 'N';
+    chessboard[0][Referee::c] = 'B';
+    chessboard[0][Referee::d] = 'Q';
+    chessboard[0][Referee::e] = 'K';
+    chessboard[0][Referee::f] = 'B';
+    chessboard[0][Referee::g] = 'N';
+    chessboard[0][Referee::h] = 'R';
     for(int i = 0; i < ROW_SIZE; i++){
-        chessboard[1][i] = 'p';
+        chessboard[1][i] = 'P';
     }
     // blackcl
-    chessboard[7][Referee::a] = 'R';
-    chessboard[7][Referee::b] = 'N';
-    chessboard[7][Referee::c] = 'B';
-    chessboard[7][Referee::d] = 'Q';
-    chessboard[7][Referee::e] = 'K';
-    chessboard[7][Referee::f] = 'B';
-    chessboard[7][Referee::g] = 'N';
-    chessboard[7][Referee::h] = 'R';
+    chessboard[7][Referee::a] = 'r';
+    chessboard[7][Referee::b] = 'n';
+    chessboard[7][Referee::c] = 'b';
+    chessboard[7][Referee::d] = 'k';
+    chessboard[7][Referee::e] = 'q';
+    chessboard[7][Referee::f] = 'b';
+    chessboard[7][Referee::g] = 'n';
+    chessboard[7][Referee::h] = 'r';
     for(int i = 0; i <ROW_SIZE ; i++){
-        chessboard[Referee::g][i] = 'P';
+        chessboard[Referee::g][i] = 'p';
     }
 
     //fill empty spaces with '_'

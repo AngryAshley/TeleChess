@@ -27,8 +27,8 @@ int Referee::CheckCollision(char chessboard[][COLUMN_SIZE], char move[MAX_MOVE_S
     cout << "turncolor " << tColor << endl;
 
     char piece = PieceAt(chessboard, posPiece);
-    int IsBlack = isupper(piece);
-    cout << "isblack " << IsBlack << endl;
+    bool IsWhite = islower  (piece);
+    cout << "isblack " << IsWhite << endl;
     int movedirection; // 0 = vertical, 1 = horizontal, 2 = diagonal
     if (move[0] == move[2] && move[1] != move[3])
     {
@@ -212,7 +212,7 @@ int Referee::CheckIfMoveAllowed(char chessboard[][COLUMN_SIZE], char move[MAX_MO
         }
         break;
     }
-    case 'p':
+    case 'P':
     {
         returnval = (move[0] == move[2] && (move[3] - move[1] == 1));
         if (CheckCollision(chessboard, move) == 0)
@@ -221,7 +221,7 @@ int Referee::CheckIfMoveAllowed(char chessboard[][COLUMN_SIZE], char move[MAX_MO
         }
         break;
     }
-    case 'P':
+    case 'p':
     {
         returnval = (move[0] == move[2] && (move[3] - move[1] == -1));
         if (CheckCollision(chessboard, move) == 0)
