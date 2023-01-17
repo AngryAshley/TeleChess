@@ -85,16 +85,6 @@ void setup()
   uiManager.UpdateDisplay();
 }
 
-// int connectToHost()
-// {
-//   while (!client.connect(HOST, PORT))
-//   {
-//     printLoadAnim();
-//   }
-//   Serial.println("Connected to server successful!");
-//   return 1;
-// }
-
 void loop()
 {
   // update the screen
@@ -104,7 +94,7 @@ void loop()
   {
     receiveBuffer = client.readString();
   }
-  
+
   if(client.connected() && !sendBuffer.isEmpty())
   {
     client.println(sendBuffer);

@@ -90,8 +90,10 @@ void UIManager::UpdateDisplay()
   case MainMenu:
   {
     String header = "";
-    //sprintf(header, "Host: %s", *client.connected() ? "Con" : "N/A");//todo get network state here
-    int selected = displayMenu(MAIN_MENU, MAINMENU_ITEMS_COUNT, header);
+    char cHeader[30];
+    header.toCharArray(cHeader,30);
+    sprintf(cHeader, "Host: %s", client->connected() ? "Con" : "N/A");//todo get network state here
+    int selected = displayMenu(MAIN_MENU, MAINMENU_ITEMS_COUNT, cHeader);
     if (encoder->GetSwitchState())
       {
         state = (MenuState)(selected + 1);
