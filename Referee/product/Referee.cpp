@@ -235,7 +235,11 @@ int Referee::CheckIfMoveAllowed(char chessboard[][COLUMN_SIZE], char move[MAX_MO
     }
     case 'P':
     {
-        returnval = (move[0] == move[2] && (move[3] - move[1] == 1));
+        if(move[1] != '2'){
+            returnval = (move[0] == move[2] && (move[3] - move[1] == 1));
+        }else{
+            returnval = ((move[0] == move[2]) && (move[3] - move[1] <= 2)) || (move[0] == move[2] && (move[3] - move[1] <= 1));
+        }
         if (CheckCollision(chessboard, move) == 0)
         {
             returnval = 0;
@@ -244,7 +248,12 @@ int Referee::CheckIfMoveAllowed(char chessboard[][COLUMN_SIZE], char move[MAX_MO
     }
     case 'p':
     {
-        returnval = (move[0] == move[2] && (move[3] - move[1] == -1));
+        if(move[1] != '7'){
+            returnval = (move[0] == move[2] && (move[3] - move[1] == -1));
+        }else{
+            returnval = ((move[0] == move[2]) && (move[3] - move[1] <= -2)) || (move[0] == move[2] && (move[3] - move[1] <= -1));
+        }
+        
         if (CheckCollision(chessboard, move) == 0)
         {
             returnval = 0;

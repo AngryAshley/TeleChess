@@ -7,8 +7,12 @@ Referee ref;
 
 void DisplayBoard(char chessboard[ROW_SIZE][COLUMN_SIZE]){
     cout << endl;
+    cout << "   a b c d e f g h" << endl << "  ----------------" << endl;
+
+
     for (int i = 0; i < ROW_SIZE; i++)
     {
+        cout << (1 + i) << "| ";
         for(int j = 0; j < COLUMN_SIZE; j++)
         {
             cout << chessboard[i][j] << " ";
